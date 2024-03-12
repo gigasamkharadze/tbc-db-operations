@@ -52,7 +52,7 @@
     <item row="1" column="0">
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="database_view">
        <layout class="QGridLayout" name="gridLayout_2">
@@ -235,7 +235,7 @@ border: 1px solid gray;
            </font>
           </property>
           <property name="text">
-           <string>Cover Type</string>
+           <string>Category</string>
           </property>
          </widget>
         </item>
@@ -262,6 +262,9 @@ border: 1px solid gray;
           <property name="styleSheet">
            <string notr="true">height: 40px;max-width: 200px;
 </string>
+          </property>
+          <property name="maximum">
+           <number>10000</number>
           </property>
          </widget>
         </item>
@@ -322,7 +325,7 @@ border: 1px solid gray;
            </font>
           </property>
           <property name="text">
-           <string>Category</string>
+           <string>Cover Type</string>
           </property>
          </widget>
         </item>
