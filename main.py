@@ -1,5 +1,4 @@
 import sys
-import time
 import PyQt5
 import threading
 import sqlite3
@@ -33,6 +32,16 @@ class MyWindow(QMainWindow):
         self.insert_button.clicked.connect(self.handle_save)
         self.home_button.clicked.connect(self.go_to_home)
 
+        data = self.conn.cursor().execute("SELECT * FROM books").fetchall()
+        thread = threading.Thread(target=self.fill_table, args=(data,))
+        thread.start()
+
+    def fill_table(self, data):
+        for row_position, record in enumerate(data):
+            self.database_table.insertRow(row_position)
+            for column_position, field in enumerate(record[1:]):
+                self.database_table.setItem(row_position, column_position, QtWidgets.QTableWidgetItem(str(field)))
+
     def go_to_insert_data(self):
         self.stackedWidget.setCurrentIndex(1)
 
@@ -46,14 +55,16 @@ class MyWindow(QMainWindow):
         cover_type = self.cover_type_input.text()
         self.clear_input_fields()
 
-        c = self.conn.cursor()
-        c.execute("""
-            INSERT INTO books (name, page_amount, category, cover_type)
-            VALUES (?, ?, ?, ?)
-        """, (name, page_amount, category, cover_type))
-        self.conn.commit()
+        add_book_thread_table = threading.Thread(
+            target=self.add_book_to_table,
+            args=(name, page_amount, category, cover_type)
+        )
+        add_book_thread_table.start()
 
-        self.add_book_to_table(name, page_amount, category, cover_type)
+        c = self.conn.cursor()
+        c.execute("INSERT INTO books (name, page_amount, category, cover_type) VALUES (?, ?, ?, ?)",
+                  (name, page_amount, category, cover_type))
+        self.conn.commit()
 
     def add_book_to_table(self, name, page_amount, category, cover_type):
         row_position = self.database_table.rowCount()
@@ -71,9 +82,14 @@ class MyWindow(QMainWindow):
 
     def closeEvent(self, event):
         self.conn.close()
-        print('Connection closed')
 
 
-app = QApplication(sys.argv)
-window = MyWindow(database='library.db')
-app.exec_()
+def main():
+    app = QApplication(sys.argv)
+    window = MyWindow('library.db')
+    window.show()
+    sys.exit(app.exec_())
+
+
+if __name__ == '__main__':
+    main()
