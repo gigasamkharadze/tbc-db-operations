@@ -93,3 +93,10 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
+#  average pages
+# c.execute("SELECT AVG(page_amount) FROM books")
+
+#  the name of the largest book
+# c.execute("SELECT name FROM books WHERE page_amount = (SELECT MAX(page_amount) FROM books)")
